@@ -1,0 +1,119 @@
+<div style="display: flex; flex-direction: column">
+  <div
+    style="
+      display: flex;
+      justify-content: center;
+      margin: 20px;
+      align-items: center;
+    "
+  >
+    <div style="display: flex">
+      <button
+        (click)="getPDFs()"
+        class="btn btn-info"
+        style="margin-right: 10px"
+      >
+        Select a PDF file
+      </button>
+      <div *ngIf="PDF" style="display: flex; gap: 10px">
+        <p>current page: {{ currentPage }}</p>
+        <button
+          *ngIf="!selectedPages.includes(currentPage)"
+          type="button"
+          (click)="addPage(currentPage)"
+          class="btn btn-danger"
+        >
+          Exclude page {{ currentPage }}
+        </button>
+        <button
+          *ngIf="selectedPages.includes(currentPage)"
+          type="button"
+          (click)="removePage(currentPage)"
+          class="btn btn-primary"
+        >
+          Include page {{ currentPage }}
+        </button>
+        <button (click)="saveDataToFile()" class="btn btn-success">
+          Save to File
+        </button>
+      </div>
+    </div>
+  </div>
+  <div
+    *ngIf="PDF"
+    style="display: flex; align-items: center; flex-direction: column"
+  >
+    <div style="display: flex; font-weight: bold">
+      Pages need to be removed:
+    </div>
+    <div style="text-align: center">{{ selectedPages.join(", ") }}</div>
+  </div>
+
+  <div style="position: relative">
+    <pdf-viewer
+      [src]="PDF"
+      [(page)]="currentPage"
+      [render-text]="true"
+      [show-all]="true"
+      [zoom-scale]="'page-width'"
+      [show-borders]="true"
+      [original-size]="true"
+      [fit-to-page]="true"
+      [autoresize]="true"
+      style="width: 100%; height: 600px"
+    >
+    </pdf-viewer>
+    <div
+      *ngIf="selectedPages.includes(currentPage)"
+      style="
+        position: absolute;
+        top: 0%;
+        right: 0%;
+        font-size: 100px;
+        font-weight: bolder;
+        opacity: 0.3;
+        color: purple;
+        border: 10px solid purple;
+      "
+    >
+      KEEP
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="myModal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">Please select a PDF file</h4>
+        <button
+          type="button"
+          class="btn-close"
+          (click)="closeModal()"
+          data-bs-dismiss="modal"
+        ></button>
+      </div>
+      <div class="modal-body">
+        <div
+          *ngFor="let key of getObjectKeys(PDFs)"
+          style="border-bottom: 1px solid black; margin-bottom: 10px"
+        >
+          <p><strong>Location: </strong> {{ key }}</p>
+          <a (click)="getSelectedPDF(key, item)" *ngFor="let item of PDFs[key]">
+            {{ item }} <br />
+          </a>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button
+          type="button"
+          class="btn btn-danger"
+          (click)="closeModal()"
+          data-bs-dismiss="modal"
+        >
+          Close
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
